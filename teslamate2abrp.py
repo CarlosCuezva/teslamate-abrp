@@ -34,7 +34,7 @@ def on_connect(client, userdata, flags, rc):
     if conf.DEBUG:
         print("Connected to the TeslaMate MQTT")
 
-    client.subscribe("teslamate/cars/" + str(conf.CAR_ID) + "/battery_level")
+    client.subscribe("teslamate/cars/" + str(conf.CAR_ID) + "/usable_battery_level")
     client.subscribe("teslamate/cars/" + str(conf.CAR_ID) + "/power")
     client.subscribe("teslamate/cars/" + str(conf.CAR_ID) + "/speed")
     client.subscribe("teslamate/cars/" + str(conf.CAR_ID) + "/latitude")
@@ -46,7 +46,7 @@ def on_connect(client, userdata, flags, rc):
     client.subscribe("teslamate/cars/" + str(conf.CAR_ID) + "/charger_voltage")
     client.subscribe("teslamate/cars/" + str(conf.CAR_ID) + "/charger_actual_current")
     client.subscribe("teslamate/cars/" + str(conf.CAR_ID) + "/odometer")
-    client.subscribe("teslamate/cars/" + str(conf.CAR_ID) + "/est_battery_range_km")
+    client.subscribe("teslamate/cars/" + str(conf.CAR_ID) + "/rated_battery_range_km")
     client.subscribe("teslamate/cars/" + str(conf.CAR_ID) + "/charge_energy_added")
 
 
@@ -68,7 +68,7 @@ def on_message(client, userdata, message):
         topic = str(message.topic).split('/')[3]
         payload = str(message.payload.decode("utf-8"))
 
-        if topic == "battery_level":
+        if topic == "usable_battery_level":
             objTLM["soc"] = int(payload)
         elif topic == "latitude":
             objTLM["lat"] = float(payload)
@@ -110,7 +110,7 @@ def on_message(client, userdata, message):
                 objTLM["is_dcfc"] = 0
         elif topic == "charge_energy_added":
             objTLM["kwh_charged"] = float(payload)
-        elif topic == "est_battery_range_km":
+        elif topic == "rated_battery_range_km":
             objTLM["est_battery_range"] = float(payload)
 
         if conf.DEBUG:
