@@ -2,7 +2,15 @@
 
 [![](https://img.shields.io/badge/Donate-PayPal-ff69b4.svg)](https://www.paypal.com/donate?hosted_button_id=9H6B9CRBL6V4E)
 
-Sync your Tesla data between Teslamate and ABRP
+Sync your Tesla data between Teslamate and ABRP.  
+
+### Extra info
+
+* Fork of [letienne/teslamate-abrp](https://github.com/letienne/teslamate-abrp).
+* Modified following the documentation of:
+  * [Iternio Telemetry API](https://documenter.getpostman.com/view/7396339/SWTK5a8w#fdb20525-51da-4195-8138-54deabe907d5)
+  * [Open Vehicles](https://docs.openvehicles.com/en/latest/plugin/abrp/README.html)
+
 
 ## Requirements
 
@@ -28,5 +36,5 @@ DEBUG = True
 ~~~
 4. Run the script
 ~~~
-python ./teslamateMqttToABRP.py
+python ./teslamate2abrp.py
 ~~~
