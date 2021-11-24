@@ -112,7 +112,7 @@ def on_message(client, userdata, message):
         if conf.DEBUG:
             print(topic + ": " + payload)
 
-    except:
+    except (ValueError, Exception):
         print("Exception on_message(): ", sys.exc_info()[0], message.topic, message.payload)
 
 
@@ -136,7 +136,7 @@ def sendToABRP():
         if conf.DEBUG:
             print(objTLM)
             print(response.text)
-    except:
+    except (ValueError, Exception):
         print("Exception sendToABRP(): ", sys.exc_info()[0])
         print(objTLM)
 
@@ -157,7 +157,7 @@ def createMQTTConnection():
         client.connect(str(conf.MQTT_SERVER), int(conf.MQTT_PORT), 30)
         client.loop_start()
 
-    except:
+    except (ValueError, Exception):
         if conf.DEBUG:
             print("Error trying to connect to the MQTT")
         sleep(RESTART)
