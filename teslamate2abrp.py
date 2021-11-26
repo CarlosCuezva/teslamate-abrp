@@ -88,8 +88,7 @@ def on_message(client, userdata, message):
         elif topic == "odometer":
             objTLM["odometer"] = float(payload)
         elif topic == "charger_actual_current":
-            if int(payload) > 0:
-                objTLM["current"] = int(payload)
+            objTLM["current"] = int(payload)
         elif topic == "charger_voltage":
             if objTLM["is_charging"] == 1:
                 objTLM["voltage"] = int(payload)
@@ -118,9 +117,9 @@ def on_message(client, userdata, message):
                     objTLM["is_dcfc"] = 1
         elif topic == "shift_state":
             if payload == "P" or payload == "N":
-                objTLM["is_parked"] = "1"
+                objTLM["is_parked"] = 1
             elif payload == "D" or payload == "R":
-                objTLM["is_parked"] = "0"
+                objTLM["is_parked"] = 0
 
         if conf.DEBUG:
             logger.debug(topic + ": " + payload)
