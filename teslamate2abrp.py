@@ -15,9 +15,9 @@ objTLM = {
     "speed": 0,
     "lat": 0,
     "lon": 0,
-    "is_charging": 0,
-    "is_dcfc": 0,
-    "is_parked": 0,
+    "is_charging": "0",
+    "is_dcfc": "0",
+    "is_parked": "0",
     "heading": 0,
     "elevation": 0,
     "ext_temp": 0,
@@ -42,6 +42,7 @@ def setupLogging():
     formatter = logging.Formatter("%(asctime)s %(levelname)s %(funcName)s:%(lineno)s - %(message)s")
     handler.setFormatter(formatter)
     logger.addHandler(handler)
+
 
 def on_connect(client, userdata, flags, rc):
     if conf.DEBUG:
@@ -79,8 +80,8 @@ def on_message(client, userdata, message):
             objTLM["speed"] = int(payload)
         elif topic == "power":
             objTLM["power"] = float(payload)
-            if objTLM["is_charging"] == 1 and int(payload) < -22:
-                objTLM["is_dcfc"] = 1
+            if objTLM["is_charging"] == "1" and int(payload) < -22:
+                objTLM["is_dcfc"] = "1"
         elif topic == "heading":
             objTLM["heading"] = int(payload)
         elif topic == "outside_temp":
@@ -90,45 +91,43 @@ def on_message(client, userdata, message):
         elif topic == "charger_actual_current":
             objTLM["current"] = int(payload)
         elif topic == "charger_voltage":
-            if objTLM["is_charging"] == 1:
+            if objTLM["is_charging"] == "1":
                 objTLM["voltage"] = int(payload)
         elif topic == "state":
             currentState = payload
             if payload == "driving":
-                objTLM["is_parked"] = 0
-                objTLM["is_charging"] = 0
-                objTLM["is_dcfc"] = 0
+                objTLM["is_parked"] = "0"
+                objTLM["is_charging"] = "0"
+                objTLM["is_dcfc"] = "0"
             elif payload == "charging":
-                objTLM["is_parked"] = 1
-                objTLM["is_charging"] = 1
-                objTLM["is_dcfc"] = 0
+                objTLM["is_parked"] = "1"
+                objTLM["is_charging"] = "1"
+                objTLM["is_dcfc"] = "0"
             else:
-                objTLM["is_parked"] = 1
-                objTLM["is_charging"] = 0
-                objTLM["is_dcfc"] = 0
+                objTLM["is_parked"] = "1"
+                objTLM["is_charging"] = "0"
+                objTLM["is_dcfc"] = "0"
         elif topic == "charge_energy_added":
             objTLM["kwh_charged"] = float(payload)
         elif topic == "est_battery_range_km":
             objTLM["est_battery_range"] = float(payload)
         elif topic == "charger_power":
             if int(payload) > 0:
-                objTLM["is_charging"] = 1
+                objTLM["is_charging"] = "1"
                 if int(payload) > 22:
-                    objTLM["is_dcfc"] = 1
+                    objTLM["is_dcfc"] = "1"
         elif topic == "shift_state":
             if payload == "P" or payload == "N":
-                objTLM["is_parked"] = 1
+                objTLM["is_parked"] = "1"
             elif payload == "D" or payload == "R":
-                objTLM["is_parked"] = 0
-
-        if conf.DEBUG:
-            logger.debug(topic + ": " + payload)
+                objTLM["is_parked"] = "0"
 
     except (ValueError, Exception):
         logger.error("Exception on_message(): ", sys.exc_info()[0], message.topic, message.payload)
 
 
 def sendToABRP():
+    global objTLM
     try:
         if currentState != "charging":
             if "kwh_charged" in objTLM:
@@ -160,7 +159,7 @@ def createMQTTConnection():
 
     try:
         if conf.DEBUG:
-            logger.debug("Trying to connect to the MQTT")
+            logger.info("Trying to connect to the MQTT")
 
         client.connect(str(conf.MQTT_SERVER), int(conf.MQTT_PORT), 30)
         client.loop_start()
