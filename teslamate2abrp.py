@@ -119,10 +119,6 @@ def on_message(client, userdata, message):
 def sendToABRP():
     try:
         if currentState != "charging":
-            if "voltage" in objTLM:
-                del objTLM["voltage"]
-            if "current" in objTLM:
-                del objTLM["current"]
             if "kwh_charged" in objTLM:
                 del objTLM["kwh_charged"]
 
@@ -171,16 +167,9 @@ def main():
 
     while True:
         i += 1
-
-        if previousState != currentState:
-            if conf.DEBUG:
-                print("New state: " + currentState)
-            previousState = currentState
-            sendToABRP()
-
         sleep(5)
 
-        if currentState == "charging" or currentState == "supercharging":
+        if currentState == "charging":
             if i % 2 == 0:
                 if conf.DEBUG:
                     print("Charging")
@@ -192,7 +181,7 @@ def main():
         elif currentState == "parked" or currentState == "online":
             if i % 300 == 0:
                 if conf.DEBUG:
-                    print("Online or parked")
+                    print("Online / Parked")
                 sendToABRP()
 
         if i > 300:
