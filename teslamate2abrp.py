@@ -154,7 +154,7 @@ def createMQTTConnection():
     global currentState
     currentState = ""
 
-    client = mqtt.Client("teslamate-abrp")
+    client = mqtt.Client("teslamate2abrp")
     client.on_connect = on_connect
     client.on_message = on_message
     client.on_disconnect = on_disconnect
@@ -182,6 +182,12 @@ def main():
     while True:
         i += 1
         sleep(5)
+
+        if previousState != currentState:
+            if conf.DEBUG:
+                logger.debug("New state: " + currentState)
+            previousState = currentState
+            i = 300
 
         if currentState == "charging":
             if i % 2 == 0:
