@@ -5,6 +5,8 @@ from datetime import datetime
 import calendar
 import config as conf
 from time import sleep
+import logging
+import logging.handlers
 
 objTLM = {
     "utc": 0,
@@ -28,18 +30,29 @@ objTLM = {
 previousState = ""
 currentState = ""
 RESTART = 15
+logger = logging.getLogger()
 
+
+def setupLogging():
+    if conf.DEBUG:
+        logger.setLevel(logging.DEBUG)
+    else:
+        logger.setLevel(logging.INFO)
+    handler = logging.handlers.RotatingFileHandler('teslamate2abrp.log', maxBytes=10000000, backupCount=5)
+    formatter = logging.Formatter("%(asctime)s %(levelname)s %(funcName)s:%(lineno)s - %(message)s")
+    handler.setFormatter(formatter)
+    logger.addHandler(handler)
 
 def on_connect(client, userdata, flags, rc):
     if conf.DEBUG:
-        print("Connected to the TeslaMate MQTT")
+        logger.info("Connected to the TeslaMate MQTT")
 
     client.subscribe("teslamate/cars/" + str(conf.CAR_ID) + "/#")
 
 
 def on_disconnect(client, userdata, rc=0):
     if conf.DEBUG:
-        print("Disconnected: result code " + str(rc))
+        logger.debug("Disconnected: result code " + str(rc))
 
     client.loop_stop()
     sleep(RESTART)
@@ -110,10 +123,10 @@ def on_message(client, userdata, message):
                 objTLM["is_parked"] = "0"
 
         if conf.DEBUG:
-            print(topic + ": " + payload)
+            logger.debug(topic + ": " + payload)
 
     except (ValueError, Exception):
-        print("Exception on_message(): ", sys.exc_info()[0], message.topic, message.payload)
+        logger.error("Exception on_message(): ", sys.exc_info()[0], message.topic, message.payload)
 
 
 def sendToABRP():
@@ -130,11 +143,11 @@ def sendToABRP():
         body = {"tlm": objTLM}
         response = requests.post(url, headers=headers, json=body)
         if conf.DEBUG:
-            print(objTLM)
-            print(response.text)
+            logger.debug(objTLM)
+            logger.debug(response.text)
     except (ValueError, Exception):
-        print("Exception sendToABRP(): ", sys.exc_info()[0])
-        print(objTLM)
+        logger.error("Exception sendToABRP(): ", sys.exc_info()[0])
+        logger.error(objTLM)
 
 
 def createMQTTConnection():
@@ -148,20 +161,21 @@ def createMQTTConnection():
 
     try:
         if conf.DEBUG:
-            print("Trying to connect to the MQTT")
+            logger.debug("Trying to connect to the MQTT")
 
         client.connect(str(conf.MQTT_SERVER), int(conf.MQTT_PORT), 30)
         client.loop_start()
 
     except (ValueError, Exception):
         if conf.DEBUG:
-            print("Error trying to connect to the MQTT")
+            logger.error("Error trying to connect to the MQTT")
         sleep(RESTART)
         createMQTTConnection()
 
 
 def main():
     global previousState
+    setupLogging()
     createMQTTConnection()
     i = -1
 
@@ -172,16 +186,16 @@ def main():
         if currentState == "charging":
             if i % 2 == 0:
                 if conf.DEBUG:
-                    print("Charging")
+                    logger.debug("Charging")
                 sendToABRP()
         elif currentState == "driving":
             if conf.DEBUG:
-                print("Driving")
+                logger.debug("Driving")
             sendToABRP()
         elif currentState == "parked" or currentState == "online":
             if i % 300 == 0:
                 if conf.DEBUG:
-                    print("Online / Parked")
+                    logger.debug("Online / Parked")
                 sendToABRP()
 
         if i > 300:
