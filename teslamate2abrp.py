@@ -15,9 +15,9 @@ objTLM = {
     "speed": 0,
     "lat": 0,
     "lon": 0,
-    "is_charging": "0",
-    "is_dcfc": "0",
-    "is_parked": "0",
+    "is_charging": False,
+    "is_dcfc": True,
+    "is_parked": False,
     "heading": 0,
     "elevation": 0,
     "ext_temp": 0,
@@ -80,8 +80,6 @@ def on_message(client, userdata, message):
             objTLM["speed"] = int(payload)
         elif topic == "power":
             objTLM["power"] = float(payload)
-            if objTLM["is_charging"] == "1" and int(payload) < -22:
-                objTLM["is_dcfc"] = "1"
         elif topic == "heading":
             objTLM["heading"] = int(payload)
         elif topic == "outside_temp":
@@ -95,31 +93,25 @@ def on_message(client, userdata, message):
         elif topic == "state":
             currentState = payload
             if payload == "driving":
-                objTLM["is_parked"] = "0"
-                objTLM["is_charging"] = "0"
-                objTLM["is_dcfc"] = "0"
+                objTLM["is_parked"] = False
+                objTLM["is_charging"] = False
             elif payload == "charging":
-                objTLM["is_parked"] = "1"
-                objTLM["is_charging"] = "1"
-                objTLM["is_dcfc"] = "0"
+                objTLM["is_parked"] = True
+                objTLM["is_charging"] = True
             else:
-                objTLM["is_parked"] = "1"
-                objTLM["is_charging"] = "0"
-                objTLM["is_dcfc"] = "0"
+                objTLM["is_parked"] = True
+                objTLM["is_charging"] = False
         elif topic == "charge_energy_added":
             objTLM["kwh_charged"] = float(payload)
         elif topic == "est_battery_range_km":
             objTLM["est_battery_range"] = float(payload)
         elif topic == "charger_power":
-            if int(payload) > 0:
-                objTLM["is_charging"] = "1"
-                if int(payload) > 22:
-                    objTLM["is_dcfc"] = "1"
+            objTLM["is_charging"] = True
         elif topic == "shift_state":
             if payload == "P" or payload == "N":
-                objTLM["is_parked"] = "1"
+                objTLM["is_parked"] = True
             elif payload == "D" or payload == "R":
-                objTLM["is_parked"] = "0"
+                objTLM["is_parked"] = False
 
     except (ValueError, Exception):
         logger.error("Exception on_message(): ", sys.exc_info()[0], message.topic, message.payload)
@@ -131,7 +123,6 @@ def sendToABRP():
         if currentState != "charging":
             if "kwh_charged" in objTLM:
                 del objTLM["kwh_charged"]
-            objTLM["power"] = 0
 
         d = datetime.utcnow()
         objTLM["utc"] = calendar.timegm(d.utctimetuple())
