@@ -91,8 +91,7 @@ def on_message(client, userdata, message):
         elif topic == "charger_actual_current":
             objTLM["current"] = int(payload)
         elif topic == "charger_voltage":
-            if objTLM["is_charging"] == "1":
-                objTLM["voltage"] = int(payload)
+            objTLM["voltage"] = int(payload)
         elif topic == "state":
             currentState = payload
             if payload == "driving":
@@ -132,6 +131,7 @@ def sendToABRP():
         if currentState != "charging":
             if "kwh_charged" in objTLM:
                 del objTLM["kwh_charged"]
+            objTLM["power"] = 0
 
         d = datetime.utcnow()
         objTLM["utc"] = calendar.timegm(d.utctimetuple())
