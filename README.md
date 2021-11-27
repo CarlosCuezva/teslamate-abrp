@@ -32,9 +32,14 @@ MQTT_PORT = "1883"
 USER_TOKEN = "@@@@@@@@-@@@@-@@@@-@@@@-@@@@@@@@@@@@"
 CAR_MODEL = "@@@@:@@:@@:@@@@:@@@@"
 CAR_ID = "1"
-DEBUG = True
+DEBUG = True/False
 ~~~
 4. Run the script
+* Run on command line (ideal for testing)
 ~~~
 python ./teslamate2abrp.py
+~~~
+* Run in the background
+~~~
+nohup python ./teslamate2abrp.py &
 ~~~
