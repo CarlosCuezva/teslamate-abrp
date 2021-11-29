@@ -143,7 +143,7 @@ def createMQTTConnection():
     global currentState
     currentState = ""
 
-    client = mqtt.Client("teslamate2abrp")
+    client = mqtt.Client()
     client.on_connect = on_connect
     client.on_message = on_message
     client.on_disconnect = on_disconnect
