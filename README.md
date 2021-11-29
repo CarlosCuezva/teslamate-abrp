@@ -32,7 +32,7 @@ MQTT_PORT = "@@@@"                                    # MQTT server port (e.g. "
 USER_TOKEN = "@@@@@@@@-@@@@-@@@@-@@@@-@@@@@@@@@@@@"   # User token generated in ABRP
 CAR_MODEL = "@@@@:@@:@@:@@@@:@@@@"                    # Car model (Find it on https://api.iternio.com/1/tlm/get_carmodels_list, e.g. "tesla:m3:19:bt36:none" for a Tesla Model 3 SR+ 2018-2020)
 CAR_ID = "1"                                          # Car number (usually 1 if you only have a car)
-DEBUG = True/False                                    # Habilitar o deshabilitar el modo de depuración
+DEBUG = True/False                                    # Enable or disable debug mode
 ~~~
 4. Run the script
 * Run on command line (ideal for testing)
