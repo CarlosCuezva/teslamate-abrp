@@ -192,13 +192,13 @@ def main():
                 logger.debug("Driving")
             sendToABRP()
         elif currentState == "parked" or currentState == "online":
-            if i % 175 == 0:
+            if i % 30 == 0:
                 if conf.DEBUG:
                     logger.debug("Online / Parked")
                 sendToABRP()
 
-        if i > 300:
-            i = 0
+        if i > 30:
+            i = -1
 
 
 if __name__ == '__main__':
