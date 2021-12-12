@@ -95,18 +95,22 @@ def on_message(client, userdata, message):
             if payload == "driving":
                 objTLM["is_parked"] = False
                 objTLM["is_charging"] = False
+                objTLM["is_dcfc"] = False
             elif payload == "charging":
                 objTLM["is_parked"] = True
                 objTLM["is_charging"] = True
+                objTLM["is_dcfc"] = True
             else:
                 objTLM["is_parked"] = True
                 objTLM["is_charging"] = False
+                objTLM["is_dcfc"] = False
         elif topic == "charge_energy_added":
             objTLM["kwh_charged"] = float(payload)
         elif topic == "est_battery_range_km":
             objTLM["est_battery_range"] = float(payload)
         elif topic == "charger_power":
-            objTLM["is_charging"] = True
+            if int(payload) > 0:
+                objTLM["is_charging"] = True
         elif topic == "shift_state":
             if payload == "P" or payload == "N":
                 objTLM["is_parked"] = True
