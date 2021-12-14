@@ -27,8 +27,8 @@ objTLM = {
     "est_battery_range": 0,
     "car_model": conf.CAR_MODEL
 }
-previousState = ""
-currentState = ""
+previousState = "asleep"
+currentState = "asleep"
 RESTART = 15
 logger = logging.getLogger()
 
