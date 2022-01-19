@@ -117,16 +117,21 @@ def on_message(client, userdata, message):
             elif payload == "D" or payload == "R":
                 objTLM["is_parked"] = False
 
+        if conf.DEBUG:
+            logger.debug(topic + ": " + payload)
+
     except (ValueError, Exception):
         logger.error("Exception on_message(): ", sys.exc_info()[0], message.topic, message.payload)
 
 
-def sendToABRP():
+def send_to_abrp():
     global objTLM
     try:
         if currentState != "charging":
             if "kwh_charged" in objTLM:
                 del objTLM["kwh_charged"]
+            if "voltage" in objTLM:
+                del objTLM["voltage"]
 
         d = datetime.utcnow()
         objTLM["utc"] = calendar.timegm(d.utctimetuple())
@@ -139,7 +144,7 @@ def sendToABRP():
             logger.debug(objTLM)
             logger.debug(response.text)
     except (ValueError, Exception):
-        logger.error("Exception sendToABRP(): ", sys.exc_info()[0])
+        logger.error("Exception send_to_abrp(): ", sys.exc_info()[0])
         logger.error(objTLM)
 
 
@@ -186,16 +191,16 @@ def main():
             if i % 2 == 0:
                 if conf.DEBUG:
                     logger.debug("Charging")
-                sendToABRP()
+                send_to_abrp()
         elif currentState == "driving":
             if conf.DEBUG:
                 logger.debug("Driving")
-            sendToABRP()
+            send_to_abrp()
         elif currentState == "parked" or currentState == "online":
             if i % 30 == 0:
                 if conf.DEBUG:
                     logger.debug("Online / Parked")
-                sendToABRP()
+                send_to_abrp()
 
         if i > 30:
             i = -1
