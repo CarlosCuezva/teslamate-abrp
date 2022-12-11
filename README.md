@@ -1,6 +1,6 @@
 # TeslaMate to A Better Routeplanner (ABRP)
 
-[![](https://img.shields.io/badge/Donate-PayPal-ff69b4.svg)](https://www.paypal.com/donate?hosted_button_id=9H6B9CRBL6V4E)
+[![](https://img.shields.io/badge/Donate-PayPal-ff69b4.svg)](https://www.paypal.com/donate?hosted_button_id=QF2MBMQZP4V2J)
 
 Sync your Tesla data between [Teslamate](https://docs.teslamate.org/) and [ABRP](https://abetterrouteplanner.com/).  
 
